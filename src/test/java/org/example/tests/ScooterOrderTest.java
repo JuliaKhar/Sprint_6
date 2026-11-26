@@ -49,6 +49,7 @@ public class ScooterOrderTest extends BaseTest {
                 .format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         rentDetailsPage.fillRentDetails(tomorrow, period, black, grey, comment);
         rentDetailsPage.clickOrderButton();
+        rentDetailsPage.confirmOrder();
 
         assertTrue(rentDetailsPage.isSuccessOrderDisplayed(),
                 "Появляется всплывающее окно об успешном создании заказа");

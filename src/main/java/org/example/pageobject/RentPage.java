@@ -67,7 +67,10 @@ public class RentPage {
 
     public void clickOrderButton() {
         driver.findElement(orderButton).click();
-        // После клика появляется окно подтверждения — жмём «Да»
+    }
+
+    //Подтверждение заказа в окне «Хотите оформить заказ?» — жмём «Да»
+    public void confirmOrder() {
         new WebDriverWait(driver, Duration.ofSeconds(3))
                 .until(ExpectedConditions.elementToBeClickable(yesButton));
         driver.findElement(yesButton).click();
