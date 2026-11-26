@@ -48,12 +48,14 @@ public class RentPage {
     // Окно успешного заказа («Заказ оформлен»)
     private final By successOrder = By.xpath("//div[contains(@class,'Order_ModalHeader') and text()='Заказ оформлен']");
 
+    // Локатор используется, чтобы закрыть календарь кликом вне него, для избежания ошибок перекрытия в firefox
+    private final By bodyElement = By.tagName("body");
 
     //Методы
     public void fillRentDetails(String date, String period, boolean black, boolean grey, String comment) {
         driver.findElement(deliveryDateField).sendKeys(date);
 // т.к.firefox ругается на перекрытие, кликаем в любое место вне календаря
-        new Actions(driver).moveToElement(driver.findElement(By.tagName("body"))).click().perform();
+        new Actions(driver).moveToElement(driver.findElement(bodyElement)).click().perform();
         driver.findElement(rentalPeriodField).click();
         new WebDriverWait(driver, Duration.ofSeconds(3))
                 .until(ExpectedConditions.visibilityOfElementLocated(rentalPeriodOption(period)));
