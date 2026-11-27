@@ -14,6 +14,9 @@ public class OrderPage {
         this.driver = driver;
     }
 
+    // Таймаут явных ожиданий
+    private static final Duration TIMEOUT = Duration.ofSeconds(10);
+
     //Список элементов первой формы заказа
 
     // Заголовок «Для кого самокат»
@@ -43,19 +46,34 @@ public class OrderPage {
     private final By nextButton = By.xpath("//button[text()='Далее']");
 
     //Методы
+
+    //Ожидание открытия первой формы заказа по заголовку «Для кого самокат»
+    public void waitForOpen() {
+        new WebDriverWait(driver, TIMEOUT)
+                .until(ExpectedConditions.visibilityOfElementLocated(forWhomHeader));
+    }
+
     public void fillForm(String name, String surname, String address, String metro, String phone) {
-        driver.findElement(nameField).sendKeys(name);
+        waitForOpen();
+
+        new WebDriverWait(driver, TIMEOUT)
+                .until(ExpectedConditions.visibilityOfElementLocated(nameField))
+                .sendKeys(name);
         driver.findElement(surnameField).sendKeys(surname);
         driver.findElement(addressField).sendKeys(address);
         // Клик по полю метро открывает список, затем выбираем станцию по тексту
+        new WebDriverWait(driver, TIMEOUT)
+                .until(ExpectedConditions.elementToBeClickable(metroField));
         driver.findElement(metroField).click();
-        new WebDriverWait(driver, Duration.ofSeconds(3))
+        new WebDriverWait(driver, TIMEOUT)
                 .until(ExpectedConditions.visibilityOfElementLocated(metroStationOption(metro)));
         driver.findElement(metroStationOption(metro)).click();
         driver.findElement(phoneField).sendKeys(phone);
     }
 
     public RentPage clickNextButton() {
+        new WebDriverWait(driver, TIMEOUT)
+                .until(ExpectedConditions.elementToBeClickable(nextButton));
         driver.findElement(nextButton).click();
         return new RentPage(driver);
     }

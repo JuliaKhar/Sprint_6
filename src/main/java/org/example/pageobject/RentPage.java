@@ -15,6 +15,9 @@ public class RentPage {
         this.driver = driver;
     }
 
+    // Таймаут явных ожиданий
+    private static final Duration TIMEOUT = Duration.ofSeconds(10);
+
     //Список элементов второй формы заказа
 
     // Заголовок «Про аренду»
@@ -52,12 +55,28 @@ public class RentPage {
     private final By bodyElement = By.tagName("body");
 
     //Методы
+
+    //Ожидание открытия второй формы заказа по заголовку «Про аренду»
+    public void waitForOpen() {
+        new WebDriverWait(driver, TIMEOUT)
+                .until(ExpectedConditions.visibilityOfElementLocated(rentHeader));
+    }
+
     public void fillRentDetails(String date, String period, boolean black, boolean grey, String comment) {
-        driver.findElement(deliveryDateField).sendKeys(date);
+        waitForOpen();
+
+        new WebDriverWait(driver, TIMEOUT)
+                .until(ExpectedConditions.elementToBeClickable(deliveryDateField))
+                .sendKeys(date);
 // т.к.firefox ругается на перекрытие, кликаем в любое место вне календаря
-        new Actions(driver).moveToElement(driver.findElement(bodyElement)).click().perform();
+        new Actions(driver)
+                .moveToElement(driver.findElement(bodyElement))
+                .click()
+                .perform();
+        new WebDriverWait(driver, TIMEOUT)
+                .until(ExpectedConditions.elementToBeClickable(rentalPeriodField));
         driver.findElement(rentalPeriodField).click();
-        new WebDriverWait(driver, Duration.ofSeconds(3))
+        new WebDriverWait(driver, TIMEOUT)
                 .until(ExpectedConditions.visibilityOfElementLocated(rentalPeriodOption(period)));
         driver.findElement(rentalPeriodOption(period)).click();
         if (black) driver.findElement(colorCheckbox("black")).click();
@@ -66,18 +85,20 @@ public class RentPage {
     }
 
     public void clickOrderButton() {
+        new WebDriverWait(driver, TIMEOUT)
+                .until(ExpectedConditions.elementToBeClickable(orderButton));
         driver.findElement(orderButton).click();
     }
 
     //Подтверждение заказа в окне «Хотите оформить заказ?» — жмём «Да»
     public void confirmOrder() {
-        new WebDriverWait(driver, Duration.ofSeconds(3))
+        new WebDriverWait(driver, TIMEOUT)
                 .until(ExpectedConditions.elementToBeClickable(yesButton));
         driver.findElement(yesButton).click();
     }
 
     public boolean isSuccessOrderDisplayed() {
-        return new WebDriverWait(driver, Duration.ofSeconds(5))
+        return new WebDriverWait(driver, TIMEOUT)
                 .until(ExpectedConditions.visibilityOfElementLocated(successOrder))
                 .isDisplayed();
     }

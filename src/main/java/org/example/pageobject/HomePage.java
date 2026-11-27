@@ -16,6 +16,9 @@ public class HomePage {
         this.driver = driver;
     }
 
+    // Таймаут явных ожиданий
+    private static final Duration TIMEOUT = Duration.ofSeconds(10);
+
     // Список элементов главной страницы, нужных для теста
 
     // Кнопка принятия куки (появляется при первом входе)
@@ -50,7 +53,7 @@ public class HomePage {
 
     public void acceptCookies() {
         try {
-            new WebDriverWait(driver, Duration.ofSeconds(3))
+            new WebDriverWait(driver, TIMEOUT)
                     .until(ExpectedConditions.elementToBeClickable(cookiesButton))
                     .click();
         } catch (Exception ignored) {
@@ -61,7 +64,7 @@ public class HomePage {
     public void clickQuestion(int index) {
         By locator = questionButton(index);
         //т.к.firefox ругается на перекрытие - клик через JS, чтобы обойти перекрывающую картинку (совет ИИ)
-        var wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        var wait = new WebDriverWait(driver, TIMEOUT);
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
 
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
@@ -70,20 +73,22 @@ public class HomePage {
 
     public String getAnswerText(int index) {
         By locator = answerText(index);
-        new WebDriverWait(driver, Duration.ofSeconds(3))
+        new WebDriverWait(driver, TIMEOUT)
                 .until(ExpectedConditions.visibilityOfElementLocated(locator));
         return driver.findElement(locator).getText();
     }
 
     public OrderPage clickTopOrderButton() {
-        var button = driver.findElement(topOrderButton);
-        button.click();
+        new WebDriverWait(driver, TIMEOUT)
+                .until(ExpectedConditions.elementToBeClickable(topOrderButton));
+        driver.findElement(topOrderButton).click();
         return new OrderPage(driver);
     }
 
     public OrderPage clickBottomOrderButton() {
-        var button = driver.findElement(bottomOrderButton);
-        button.click();
+        new WebDriverWait(driver, TIMEOUT)
+                .until(ExpectedConditions.elementToBeClickable(bottomOrderButton));
+        driver.findElement(bottomOrderButton).click();
         return new OrderPage(driver);
     }
 
